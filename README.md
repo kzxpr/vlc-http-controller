@@ -1,5 +1,5 @@
 # vlc-http-controller
-An ExpressJS that starts VLC (VideoLAN) and serves the interface as HTTP endpoints.
+An ExpressJS that starts VLC (VideoLAN) and presents a controller as HTTP endpoints.
 
 The project builds on running VLC in "interactive RC mode". Read more here: https://wiki.videolan.org/Documentation:Modules/rc/
 
