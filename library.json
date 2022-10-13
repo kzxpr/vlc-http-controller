@@ -1,0 +1,32 @@
+{
+    "media":
+        [
+            {
+                "id": 1,
+                "title": "Griffith",
+                "src": "/home/kzxpr/Desktop/MusketeersOfPigAlley.mp4",
+                "clips": [
+                    {
+                        "clip_id": 1,
+                        "description": "Her sker der noget",
+                        "seconds_start": 200
+                    },
+                    {
+                        "clip_id": 2,
+                        "description": "Her sker intet",
+                        "seconds_start": 300
+                    }
+                ]
+            },
+            {
+                "id": 2,
+                "title": "Brakhage",
+                "src": "/home/kzxpr/Videos/2018-10-02 17-14-50.flv"
+            },
+            {
+                "id": 3,
+                "title": "Marx Brothers",
+                "src": "/home/kzxpr/Videos/Dont you know what a hog is Marx Brothers.mp4"
+            }
+        ]
+}

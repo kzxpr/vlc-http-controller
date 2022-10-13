@@ -1,0 +1,190 @@
+<div style="display: flex; flex-direction: column; height: 100%;">
+    <div style="display: flex; flex-direction: row; height: 80%;">
+        <div style="width: 33%">
+            <h1>Library</h1>
+            <div id="library"></div>
+        </div>
+        <div style="width: 33%">
+            <h1>Playlist</h1>
+            <div id="playlist"></div>
+            <div id="panelplaylist"></div>
+        </div>
+        <div style="width: 33%">
+            <h1>Clips</h1>
+            <div id="clips"></div>
+            <div>
+                <textarea></textarea>
+                <button>Mark!</button>
+            </div>
+        </div>
+    </div>
+    <div style="height: 20%; display: flex; flex-direction: column;">
+        <div id="panel"></div>
+        <div id="panel2"></div>
+        <div id="panel3"></div>
+    </div>
+</div>
+
+
+<script type="text/javascript" src="https://d3js.org/d3.v6.min.js"></script>
+<script>
+const library = d3.select("#library").append("ul")
+
+function loadClips(clips){
+    console.log("LOAD", clips)
+    d3.select("#clips").selectAll("*").remove();
+    const overview = d3.select("#clips").append("table");
+    for(let clip of clips){
+        const clipline = overview.append("tr")
+        clipline.append("td").text(clip.seconds_start)
+            .on("click", function(){
+                callVLC("seek", { time: clip.seconds_start })
+            })
+        clipline.append("td").text(clip.description)
+    }
+}
+
+d3.json("/library", {
+    method: "GET"
+    }).then(function (data) {
+        const files = data.media;
+        for(let file of files){
+        const m = library.append("li");
+        m.append("span").text(file.title)
+        m.append("button").text("Play now!")
+            .on("click", function(){
+                callVLC("load", { fileid: file.id })
+            })
+        m.append("button").text("Add to queue")
+            .on("click", function(){
+                callVLC("enqueue", { fileid: file.id })
+            })
+        if(file.clips){
+            m.append("button").text("Load clips "+file.clips.length)
+            .on("click", function(){
+                loadClips(file.clips)
+            })
+        }else{
+            m.append("button").text("Load clips (0)")
+            .on("click", function(){
+                loadClips([])
+            })
+        }
+        
+    }
+    })
+
+function showPlaylist(data){
+    console.log("BANG")
+    d3.select("#playlist").selectAll("*").remove();
+    const playlist = d3.select("#playlist").append("ul")
+    let start = false;
+    for(let line of data.data){
+        if(line=="| 2 - Media Library"){
+            break;
+        }else if(start){
+            playlist.append("li").text(line)
+        }else if(line=="| 1 - Playlist"){
+            start = true;
+        }
+    }
+}
+
+function callVLC(endpoint, data, cb){
+    d3.json("/"+endpoint, {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
+    }).then(function (params) {
+        console.log(params);
+        if(cb){
+            cb(params)
+        }
+    })
+}
+
+const panel = d3.select("#panel");
+const panel2 = d3.select("#panel2");
+const panel3 = d3.select("#panel3");
+const panelplaylist = d3.select("#panelplaylist")
+
+
+
+panel3.append("button").text("Gettime").on("click", function(){
+    callVLC("gettime", {})
+})
+
+panel3.append("button").text("help").on("click", function(){
+    callVLC("help", {})
+})
+
+panel3.append("button").text("getlength").on("click", function(){
+    callVLC("getlength", {})
+})
+
+panel3.append("button").text("gettimeline").on("click", function(){
+    callVLC("gettimeline", {})
+})
+
+panelplaylist.append("button").text("getplaylist").on("click", function(){
+    callVLC("getplaylist", {}, showPlaylist)
+})
+
+/*panel.append("button").text("INFO").on("click", function(){
+    callVLC("info", {})
+})*/
+
+panel.append("button").text("Jump back").on("click", function(){
+    callVLC("rewind", {})
+})
+
+panel.append("button").text("Play").on("click", function(){
+    callVLC("play", {})
+})
+
+panel.append("button").text("Pause").on("click", function(){
+    callVLC("pause", {})
+})
+
+panel.append("button").text("Jump forward").on("click", function(){
+    callVLC("fastforward", {})
+})
+
+panel2.append("button").text("normal").on("click", function(){
+    callVLC("normal", {})
+})
+
+panel2.append("button").text("slower").on("click", function(){
+    callVLC("slower", {})
+})
+
+panel2.append("button").text("faster").on("click", function(){
+    callVLC("faster", {})
+})
+
+panel2.append("button").text("Next frame").on("click", function(){
+    callVLC("frame", {})
+})
+
+panelplaylist.append("button").text("Clear playlist").on("click", function(){
+    callVLC("clear", {})
+})
+
+panelplaylist.append("button").text("Next on playlist").on("click", function(){
+    callVLC("next", {})
+})
+
+panelplaylist.append("button").text("Prev on playlist").on("click", function(){
+    callVLC("prev", {})
+})
+
+panel.append("button").text("Fullscreen").on("click", function(){
+    callVLC("fullscreen", {})
+})
+
+panel.append("button").text("STOP").on("click", function(){
+    callVLC("stop", {})
+})
+</script>
