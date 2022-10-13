@@ -5,6 +5,8 @@ The project builds on running VLC in "interactive RC mode". Read more here: http
 
 When the server runs, it launches a "remote control" interface at localhost. If can, however, also be address by any other program or script using standard HTTP protocol.
 
+![The "remote control" running in browser](./browser-controller.png)
+
 BEWARE: Some of the functions require callbacks (e.g. "get_time", "get_length", "playlist" and more), and I have written some promise-based code to await these before sending a response to the HTTP request. HOWEVER, this assumes that VLC handles these functions in a queue using FIFO, and that they're not running synchronously. I haven't stress tested this nor read documentation, so it might cause errors in the values that are returned.
 
 ## Requirements
